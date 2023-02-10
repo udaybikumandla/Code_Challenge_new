@@ -16,7 +16,6 @@ class Account extends Bank
     public $bankSubAccountTypeId;
     private $bankName;
     
-
     public function __construct($bankName)
     {
         parent::__construct($bankName);
@@ -80,9 +79,6 @@ class Account extends Bank
                     $_SESSION['create_account'] = [];
                 }
 
-                // $account_type = Account::getAccountTypeByUsingId(
-                //     $request['accountTypeId']
-                // );
                 if ($request['accountSubType'] != '') {
                     $subAccount_type =  $request['accountSubType'];
                 } else {
@@ -171,7 +167,7 @@ class Account extends Bank
                             }
                             $result['bank_name'] = BANK_NAME;
                             $result['accountType'] = $accountType;
-                           $result['subAccountType'] = $accountSubType;
+                            $result['subAccountType'] = $accountSubType;
                             $result['accountOwenrId'] = $ownerId;
                             $result['accountOwenName'] = $ownerName;
                             $result['account_no'] = $accounts['account_number'];
@@ -190,8 +186,7 @@ class Account extends Bank
                         'message' => $message->NoAccount(),
                     ];
                 }
-               
-                $data = [
+               $data = [
                    
                     'status' => 'success',
                     'data' => $result,
@@ -253,10 +248,8 @@ class Account extends Bank
                         $result['account_sub_type'] = $account_sub_type;
                         $result['accountOwnerId'] = $accounts['id'];
                         $result['account_no'] = $accounts['account_number'];
-                        $result['account_name'] =
-                            $accounts['account_owner_name'];
-                        $result['available balance'] =
-                            $accounts['account_balance'];
+                        $result['account_name'] = $accounts['account_owner_name'];
+                        $result['available balance'] = $accounts['account_balance'];
                         $result['mobile'] = $accounts['mobile'];
                         $result['address'] = $accounts['address'];
                         $result['account_status'] = $accounts['account_status'];
@@ -299,8 +292,7 @@ class Account extends Bank
             $accounts = $_SESSION['create_account'];
             $result = [];
             foreach ($accounts as $key => $accountData) {
-               
-                if (
+               if (
                     $accountData['account_number'] == $accountNumber &&
                     $accountData['id'] == $owenerId &&
                     $accountData['account_status'] == 'Active'
