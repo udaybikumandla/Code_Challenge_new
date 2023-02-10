@@ -18,7 +18,6 @@ class AccountTest extends \PHPUnit\Framework\TestCase
         );
         json_decode($response->getBody(), true);
         return   $this->assertEquals(200, $response->getStatusCode());
-       
     }
 
     public function test_create_account()
