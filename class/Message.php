@@ -7,9 +7,11 @@ class Message{
     {
         return "API type invalied.";
     }
+    
     public function AccountOwnerNameExitsMsg(){
         return "Account owner name already exits.";
     }
+    
     public function AccountNumberExitsMsg(){
         return "Account number already exits.";
     }
@@ -21,26 +23,32 @@ class Message{
     {
         return "Account created successfully";
     }
+    
     public function NoAccount()
     {
         return "There is no account.";
     }
+    
     public function AccountUpdateSuccess()
     {
         return "Account Updated Successfully.";
     }
+    
     public function BankOwenerList()
     {
         return "Bank Account Owner List.";
     }
+    
     public function NoAccounts()
     {
         return "There is no accouts list.";
     }
+    
     public function BankOwenerDetails()
     {
         return "Bank account owner details.";
     }
+    
     public function DepositeSuccess()
     {
         return "Amount Deposited successfully.";
