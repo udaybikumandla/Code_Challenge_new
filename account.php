@@ -13,11 +13,9 @@ elseif ($request['api_type'] == 'updateaccount' && $request['api_type']) {
     $account->UpdateAccount($request);
 }
 elseif ($request['api_type'] == 'accountowner' && $request['api_type']) {
-   
-    $account->accountOwnerList($request);
+   $account->accountOwnerList($request);
 }
 elseif ($request['api_type'] == 'accountdetails' && $request['api_type']) {
-   
     $account->accountDetails($request);
 }
 elseif ($request['api_type'] == 'banktransaction' && $request['api_type']){
@@ -46,6 +44,5 @@ catch (\Exception $e) {
     ];
     echo json_encode($data);
 }
-
 
 ?>
