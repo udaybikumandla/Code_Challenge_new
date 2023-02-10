@@ -7,13 +7,12 @@ abstract class Bank
 
     public function __construct($bankName)
     {
-       
-        $this->bankName = $bankName;
+       $this->bankName = $bankName;
     }
 
     /*get the name of bank */
     abstract public function getBankName();
-
+    
     /*get the account ownner list */
     abstract public function accountOwnerList($request);
 
@@ -33,7 +32,6 @@ abstract class Bank
     abstract public function removeAccount($request);
 
     /*account type with owner name */
-
     abstract public function accountTypeWithOwnerName($request);
 }
 
