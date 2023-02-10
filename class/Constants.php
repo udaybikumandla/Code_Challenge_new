@@ -5,11 +5,9 @@ Class Constants{
 
     protected const ACCOUNT_TYPE_CHECKING = 'Checking';
     protected const ACCOUNT_TYPE_INVESTMENT = 'investment';
-
     protected const SUB_ACCOUNT_TYPE_INDIVIDUAL ='individual';
-
     protected const SUB_ACCOUNT_TYPE_CORPORATE ='corporate';
-
+    
     public function AccounttypeChecking() {
         return self:: ACCOUNT_TYPE_CHECKING;
     } 
