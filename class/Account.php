@@ -1,16 +1,12 @@
 <?php
 
 namespace Accounts;
-
-
 require_once('config/config.php');
 require_once 'Bank.php';
 use \Exception;
 use Banking\bank as Bank;
 use AllConstants\Constants as Constant;
 use Messages\Message as Message;
-
-
 session_start();
 
 class Account extends Bank
