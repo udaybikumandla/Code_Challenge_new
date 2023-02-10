@@ -1,9 +1,5 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 require_once('config/config.php');
-
 $account = new \Accounts\Account(BANK_NAME);
 use Messages\Message as Message;
 $bankName = $account->getBankName();
