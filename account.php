@@ -3,7 +3,6 @@ require_once('config/config.php');
 $account = new \Accounts\Account(BANK_NAME);
 use Messages\Message as Message;
 $bankName = $account->getBankName();
-
 try {
     $message = new message();
 if ($request['api_type'] == 'createaccount' && $request['api_type']) {
@@ -16,7 +15,7 @@ elseif ($request['api_type'] == 'accountowner' && $request['api_type']) {
    $account->accountOwnerList($request);
 }
 elseif ($request['api_type'] == 'accountdetails' && $request['api_type']) {
-    $account->accountDetails($request);
+   $account->accountDetails($request);
 }
 elseif ($request['api_type'] == 'banktransaction' && $request['api_type']){
     $account->accountDeposit($request);
@@ -34,7 +33,7 @@ elseif ( $request['api_type'] == 'accountdetailschekcing' && $request['api_type'
     $account->accountTypeWithOwnerName($request);
 }
 else {
-    throw new Exception($message->ApiTypeInvaliedMsg());
+    throw new Exception(Message::API_TYPE_INVALIED);
 }
 }
 catch (\Exception $e) {
@@ -44,5 +43,4 @@ catch (\Exception $e) {
     ];
     echo json_encode($data);
 }
-
 ?>
