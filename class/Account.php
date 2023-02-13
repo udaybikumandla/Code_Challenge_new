@@ -1,5 +1,4 @@
 <?php
-
 namespace Accounts;
 require_once('config/config.php');
 require_once 'Bank.php';
