@@ -1,12 +1,16 @@
 <?php
 
 namespace Accounts;
+
+
 require_once('config/config.php');
 require_once 'Bank.php';
 use \Exception;
 use Banking\bank as Bank;
 use AllConstants\Constants as Constant;
 use Messages\Message as Message;
+
+
 session_start();
 
 class Account extends Bank
@@ -16,19 +20,11 @@ class Account extends Bank
     public $bankSubAccountTypeId;
     private $bankName;
     
+
     public function __construct($bankName)
     {
         parent::__construct($bankName);
         
-    }
-
-    public function constant()
-    {
-        return $constant = new Constant();
-    }
-    public function message()
-    {
-       return  $message = new message();
     }
     public function getBankName()
     {
@@ -37,7 +33,6 @@ class Account extends Bank
     public function createAccount($request)
     {   
         try {
-            $message = $this->message();
            $error = Account::insertValidation($request);
             if ($error['status'] == 1) {
                 $acountNumberStart = 50100;
@@ -53,13 +48,13 @@ class Account extends Bank
                 ) {
                     foreach ($_SESSION['create_account'] as $accountData) {
                         if (in_array($request['ownerName'], $accountData)) {
-                            throw new Exception($message->AccountOwnerNameExitsMsg());
+                            throw new Exception(Message::ACCOUNT_OWNER_NAME_EXITS);
                         }
                         if (in_array($acountNumber, $accountData)) {
-                            throw new Exception($message->AccountNumberExitsMsg());
+                            throw new Exception(Message::ACCOUNT_OWNER_NAME_EXITS);
                         }
                         if (in_array($request['mobile'], $accountData)) {
-                            throw new Exception($message->MobileNumberExitsMsg());
+                            throw new Exception(Message::MOBILE_NUMBER_EXITS);
                         }
                     }
                 }
@@ -78,8 +73,7 @@ class Account extends Bank
                     $request['id'] = '1';
                     $_SESSION['create_account'] = [];
                 }
-
-                if ($request['accountSubType'] != '') {
+                 if ($request['accountSubType'] != '') {
                     $subAccount_type =  $request['accountSubType'];
                 } else {
                     $subAccount_type = 'NULL';
@@ -98,7 +92,7 @@ class Account extends Bank
                 $data = [
                     'status' => 'success',
                     'data' => $result,
-                    'message' => $message->AccountSuccessMsg(),
+                    'message' => Message::ACCOUNT_SUCCESS_MSG,
                 ];
                 echo json_encode($data);
             } else {
@@ -116,10 +110,7 @@ class Account extends Bank
     public function UpdateAccount($request)
     {
         try {
-           $message = $this->message();
-           $constant = $this->constant();
             $error = Account::UpdateAccountValidation($request);
-
             if ($error['status'] == 1) {
                 $ownerId = $request['ownerId'];
                 $accountType = $request['accountType'];
@@ -145,21 +136,21 @@ class Account extends Bank
                             $accountsData[$key]['address'] = $address;
                             $_SESSION['create_account'] = $accountsData;
 
-                            if($accounts['accountType']==$constant->AccounttypeChecking())
+                            if($accounts['accountType']==Constant::ACCOUNT_TYPE_CHECKING)
                             {
-                                $accountType = $constant->AccounttypeChecking();
+                                $accountType = Constant::ACCOUNT_TYPE_CHECKING;
                             }
-                            elseif($accounts['accountType']==$constant->AccounttypeInvestment())
+                            elseif($accounts['accountType']== Constant::ACCOUNT_TYPE_INVESTMENT)
                             {
-                                $accountType = $constant->AccounttypeInvestment();
+                                $accountType = Constant::ACCOUNT_TYPE_INVESTMENT;
                             }
                            
                             if ($accounts['account_sub_type'] != ''&&  $accounts['account_sub_type']!='NULL' ) {
-                                if($accounts['account_sub_type']==$constant->SubAccounttypeIndividual()){
-                                    $account_sub_type =  $constant->SubAccounttypeIndividual();
+                                if($accounts['account_sub_type']== Constant::SUB_ACCOUNT_TYPE_INDIVIDUAL){
+                                    $account_sub_type =  Constant::SUB_ACCOUNT_TYPE_INDIVIDUAL;
                                 }
-                                if($accounts['account_sub_type']==$constant->subAccounttypecorporate()){
-                                    $account_sub_type =  $constant->subAccounttypecorporate();
+                                if($accounts['account_sub_type']== Constant::SUB_ACCOUNT_TYPE_CORPORATE){
+                                    $account_sub_type =  Constant::SUB_ACCOUNT_TYPE_CORPORATE;
                                 }
                                 
                             } else {
@@ -167,7 +158,7 @@ class Account extends Bank
                             }
                             $result['bank_name'] = BANK_NAME;
                             $result['accountType'] = $accountType;
-                            $result['subAccountType'] = $accountSubType;
+                           $result['subAccountType'] = $accountSubType;
                             $result['accountOwenrId'] = $ownerId;
                             $result['accountOwenName'] = $ownerName;
                             $result['account_no'] = $accounts['account_number'];
@@ -183,14 +174,15 @@ class Account extends Bank
                     $data = [
                         'status' => 'success',
                         'data' => $accountsData,
-                        'message' => $message->NoAccount(),
+                        'message' => Message::NO_ACCOUNT_MSG,
                     ];
                 }
-               $data = [
+               
+                $data = [
                    
                     'status' => 'success',
                     'data' => $result,
-                    'message' => $message->AccountUpdateSuccess(),
+                    'message' => Message::ACCOUNT_UPDATE_SUCCESS,
                 ];
                 echo json_encode($data);
             } else {
@@ -209,12 +201,10 @@ class Account extends Bank
     public function accountOwnerList($request)
     {
         try {
-           $message = $this->message();
-           $constant = $this->constant();
-            if (
+           if (
                 !empty($_SESSION['create_account']) &&
                 isset($_SESSION['create_account'])
-            ) {
+            ) { 
                 $accountsData = $_SESSION['create_account'];
                 $allAccounts = [];
                 if (count($accountsData) > 0) {
@@ -222,21 +212,21 @@ class Account extends Bank
                     $result = [];
                     foreach ($accountsData as $key => $accounts) {
                         
-                        if($accounts['accountType']==$constant->AccounttypeChecking())
+                        if($accounts['accountType']== Constant::ACCOUNT_TYPE_CHECKING)
                         {
-                            $accountType = $constant->AccounttypeChecking();
+                            $accountType = Constant::ACCOUNT_TYPE_CHECKING;
                         }
-                        elseif($accounts['accountType']==$constant->AccounttypeInvestment())
+                        elseif($accounts['accountType']== Constant::ACCOUNT_TYPE_INVESTMENT)
                         {
-                            $accountType = $constant->AccounttypeInvestment();
+                            $accountType = Constant::ACCOUNT_TYPE_INVESTMENT;
                         }
                        
                         if ($accounts['account_sub_type'] != ''&&  $accounts['account_sub_type']!='NULL' ) {
-                            if($accounts['account_sub_type']==$constant->SubAccounttypeIndividual()){
-                                $account_sub_type =  $constant->SubAccounttypeIndividual();
+                            if($accounts['account_sub_type']== Constant::SUB_ACCOUNT_TYPE_INDIVIDUAL){
+                                $account_sub_type =  Constant::SUB_ACCOUNT_TYPE_INDIVIDUAL;
                             }
-                            if($accounts['account_sub_type']==$constant->subAccounttypecorporate()){
-                                $account_sub_type =  $constant->subAccounttypecorporate();
+                            if($accounts['account_sub_type']== Constant::SUB_ACCOUNT_TYPE_CORPORATE){
+                                $account_sub_type =  Constant::SUB_ACCOUNT_TYPE_CORPORATE;
                             }
                             
                         } else {
@@ -248,8 +238,10 @@ class Account extends Bank
                         $result['account_sub_type'] = $account_sub_type;
                         $result['accountOwnerId'] = $accounts['id'];
                         $result['account_no'] = $accounts['account_number'];
-                        $result['account_name'] = $accounts['account_owner_name'];
-                        $result['available balance'] = $accounts['account_balance'];
+                        $result['account_name'] =
+                            $accounts['account_owner_name'];
+                        $result['available balance'] =
+                            $accounts['account_balance'];
                         $result['mobile'] = $accounts['mobile'];
                         $result['address'] = $accounts['address'];
                         $result['account_status'] = $accounts['account_status'];
@@ -258,12 +250,12 @@ class Account extends Bank
                     $data = [
                         'status' => 'success',
                         'data' => $allAccounts,
-                        'message' => $message->BankOwenerList(),
+                        'message' => Message::BANK_OWNER_LIST,
                     ];
                     echo json_encode($data);
                 }
             } else {
-                throw new Exception($message->NoAccounts());
+                throw new Exception(Message::NO_ACCOUNTS_MSG);
             }
         } catch (\Exception $e) {
             $data = [
@@ -279,39 +271,38 @@ class Account extends Bank
     public function accountDetails($request)
     {
         try {
-            $message = $this->message();
-            $constant = $this->constant();
-            if ($request['ownerId'] == '') {
-                throw new Exception($message->OwnerIdMsg());
+             if ($request['ownerId'] == '') {
+                throw new Exception(Message::OWNER_ID_MSG);
             }
             if ($request['accountNumber'] == '') {
-                throw new Exception($message->accountNumberMsg());
+                throw new Exception(Message::ACCOUNT_NUMBER_MSG);
             }
             $accountNumber = $request['accountNumber'];
             $owenerId = $request['ownerId'];
             $accounts = $_SESSION['create_account'];
             $result = [];
             foreach ($accounts as $key => $accountData) {
-               if (
+               
+                if (
                     $accountData['account_number'] == $accountNumber &&
                     $accountData['id'] == $owenerId &&
                     $accountData['account_status'] == 'Active'
                 ) {
-                    if($accountData['accountType']==$constant->AccounttypeChecking())
+                    if($accountData['accountType']== Constant::ACCOUNT_TYPE_CHECKING)
                     {
-                        $accountType = $constant->AccounttypeChecking();
+                        $accountType = Constant::ACCOUNT_TYPE_CHECKING;
                     }
-                    elseif($accountData['accountType']==$constant->AccounttypeInvestment())
+                    elseif($accountData['accountType']== Constant::ACCOUNT_TYPE_INVESTMENT)
                     {
-                        $accountType = $constant->AccounttypeInvestment();
+                        $accountType = Constant::ACCOUNT_TYPE_INVESTMENT;
                     }
                    
                     if ($accountData['account_sub_type'] != ''&&  $accountData['account_sub_type']!='NULL' ) {
-                        if($accountData['account_sub_type']==$constant->SubAccounttypeIndividual()){
-                            $account_sub_type =  $constant->SubAccounttypeIndividual();
+                        if($accountData['account_sub_type']== Constant::SUB_ACCOUNT_TYPE_INDIVIDUAL){
+                            $account_sub_type =  Constant::SUB_ACCOUNT_TYPE_INDIVIDUAL;
                         }
-                        if($accountData['account_sub_type']==$constant->subAccounttypecorporate()){
-                            $account_sub_type =  $constant->subAccounttypecorporate();
+                        if($accountData['account_sub_type']== Constant::SUB_ACCOUNT_TYPE_CORPORATE){
+                            $account_sub_type =  Constant::SUB_ACCOUNT_TYPE_CORPORATE;
                         }
                         
                     } else {
@@ -333,7 +324,7 @@ class Account extends Bank
             $data = [
                 'status' => 'success',
                 'data' => $result,
-                'message' => $message->BankOwenerDetails(),
+                'message' => Message::BANK_OWNER_DETAILS,
             ];
             echo json_encode($data);
         } catch (\Exception $e) {
@@ -349,9 +340,7 @@ class Account extends Bank
 
     public function accountDeposit($request)
     {
-       
         try {
-            $message = $this->message();
             $error = Account::DepositValidation($request);
             if ($error['status'] == 1) {
                 $ownerID = $request['ownerId'];
@@ -377,14 +366,14 @@ class Account extends Bank
                     $data = [
                         'status' => 'success',
                         'data' => [],
-                        'message' => $message->DepositeSuccess(),
+                        'message' => Message::DEPOSITE_SUCCESS_MSG,
                     ];
                     echo json_encode($data);
                 } else {
                     return response()->json([
                         'status' => 'failed',
                         'data' => [],
-                        'message' => $message->NoAccount(),
+                        'message' => Message::NO_ACCOUNT_MSG,
                     ]);
                 }
             } else {
@@ -404,8 +393,6 @@ class Account extends Bank
     public function accountWithdrawal($request)
     {
         try {
-            $message = $this->message();
-            $constant = $this->constant();
             $error = Account::WithdrawalValidations($request);
             if ($error['status'] == 1) {
                 $ownerID = $request['ownerId'];
@@ -430,11 +417,11 @@ class Account extends Bank
                             
 
                             if ($accountData['account_sub_type'] != '' &&  $accountData['account_sub_type']!='NULL' ) {
-                                if($accountData['account_sub_type']==$constant->SubAccounttypeIndividual()){
-                                    $subAccount_type =  $constant->SubAccounttypeIndividual();
+                                if($accountData['account_sub_type']== Constant::SUB_ACCOUNT_TYPE_INDIVIDUAL){
+                                    $subAccount_type =  Constant::SUB_ACCOUNT_TYPE_INDIVIDUAL;
                                 }
-                                if($accountData['account_sub_type']==$constant->subAccounttypecorporate()){
-                                    $subAccount_type =  $constant->subAccounttypecorporate();
+                                if($accountData['account_sub_type']== Constant::SUB_ACCOUNT_TYPE_CORPORATE){
+                                    $subAccount_type =  Constant::SUB_ACCOUNT_TYPE_CORPORATE;
                                 }
                                 
                             } else {
@@ -442,12 +429,12 @@ class Account extends Bank
                             }
                            
                             if ($available_balance < $amount) {
-                                throw new Exception($message->InsufficientMsg());
+                                throw new Exception(Message::INSUFFICIENT_MSG);
                             } elseif (
                                 $subAccount_type == 'individual' &&
                                 $amount > 500
                             ) {
-                                throw new Exception($message->IndividualWithdrawlLimitMSG());
+                                throw new Exception(Message::INDIVIDUAL_WITHDRAW_LIMIT_MSG);
                             }
                             $AllAccountsData[$key][
                                 'account_balance'
@@ -458,7 +445,7 @@ class Account extends Bank
                     $data = [
                         'status' => 'success',
                         'data' => [],
-                        'message' => $message->WithdrawalScussessMSG(),
+                        'message' => Message::WITHDRAWAL_SUCCESS_MSG,
                     ];
                     echo json_encode($data);
                 }
@@ -478,7 +465,6 @@ class Account extends Bank
     public function accountBalanceTransfer($request)
     {
         try {
-            $message = $this->message();
             $error = Account::balancetransferValidation($request);
             if ($error['status'] == 1) {
                 $ownerID = $request['ownerId'];
@@ -490,7 +476,7 @@ class Account extends Bank
                 $toaAcountNo = $request['toaccountno'];
                 $accountsData = $_SESSION['create_account'];
                 if ($transactionType != 'Transfer') {
-                    throw new Exception('Transaction type invalied');
+                    throw new Exception(Message::TRANSACTION_TYPE_INVALIED);
                 }
                 $fromAccount = [];
                 $toAccount = [];
@@ -517,22 +503,22 @@ class Account extends Bank
                     $data = [
                         'status' => 'success',
                         'data' => [],
-                        'message' => $message->NoAccount(),
+                        'message' => Message::NO_ACCOUNT_MSG,
                     ];
                     echo json_encode($data);
                 }
                 if (empty($fromAccount)) {
                     throw new Exception(
-                        $message->FromAccountNotExitMsg()
+                        Message::FROM_ACCOUNT_NOT_EXITS_MSG
                     );
                 }
                 if (empty($toAccount)) {
                     throw new Exception(
-                        $message->ToAccountNotExitMsg()
+                       Message::TO_ACCOUNT_NOT_EXITS_MSG
                     );
                 }
                 if ($fromAccount['account_balance'] < $amount) {
-                    throw new Exception($message->InsufficientMsg());
+                    throw new Exception(Message::INSUFFICIENT_MSG);
                 } else {
                     $fromAccountTotal =
                         $fromAccount['account_balance'] - $amount;
@@ -555,7 +541,7 @@ class Account extends Bank
                     $data = [
                         'status' => 'success',
                         'data' => [],
-                        'message' => $message->TrasferredSuccessMsg(),
+                        'message' => Message::TRANSFER_SUCCSS_MSG,
                     ];
                     echo json_encode($data);
                 }
@@ -604,7 +590,7 @@ class Account extends Bank
                         $accountdata['account_status'] == 'In-Active'
                     ) {
                      
-                        throw new Exception($message->OwnerNotActiveMsg());
+                        throw new Exception(Message::OWNER_NOT_ACTIVE_MSG);
                         break;
 
                     }
@@ -612,13 +598,13 @@ class Account extends Bank
                 $data = [
                     'status' => 'success',
                     'data' => $result,
-                    'message' => $message->OwnerNameWithType(),
+                    'message' => Message::OWNER_NAME_WITH_TYPE,
                 ];
             } else {
                 $data = [
                     'status' => 'success',
                     'data' => $accountsData,
-                    'message' => $message->NoAccount(),
+                    'message' => Message::NO_ACCOUNTS_MSG,
                 ];
             }
             echo json_encode($data);
@@ -630,34 +616,6 @@ class Account extends Bank
             echo json_encode($data);
         }
     }
-    /* getAccountType using Id */
-    public function getAccountTypeByUsingId($id)
-    {
-        $account_type = [];
-        foreach (BANK_ACCOUNT_TYPE as $key => $accountType) {
-            if (in_array($id, $accountType)) {
-                $account_type['type'] = $accountType['type'];
-            }
-        }
-
-        return $account_type;
-    }
-
-    /* get subAccountType using Id */
-    public function getSubAccountTypeByUsingId($id)
-    {
-        $subAccount_type = [];
-        foreach (BANK_SUB_ACCOUNT_TYPE as $key => $subAccountType) {
-            if (in_array($id, $subAccountType)) {
-                if ($subAccountType['id'] == $id) {
-                    $subAccount_type['account_sub_type'] =
-                        $subAccountType['account_sub_type'];
-                }
-            }
-        }
-        return $subAccount_type;
-    }
-
     /* Input filed validation */
     public static function validationRequired($inputField)
     {
@@ -672,27 +630,26 @@ class Account extends Bank
     public function insertValidation($data)
     {
         $return = [];
-        $message = $this->message();
         if (Account::validationRequired($data['accountType']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->AccountTypeMsg();
+            $return['message'] = Message::ACCOUNT_TYPE_MSG;
         } elseif (
             Account::validationRequired($data['accountSubType']) == false
         ) {
             $return['status'] = 'false';
-            $return['message'] = $message->subAccountTypeMsg();
+            $return['message'] = Message::SUB_ACCOUNT_TYPE_MSG;
         } elseif (Account::validationRequired($data['ownerName']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->OwnerNameMSg();
+            $return['message'] = Message::OWNER_NAME_MSG;
         } elseif (!preg_match('/^([a-zA-Z ]*)$/', $data['ownerName'])) {
             $return['status'] = 'false';
-            $return['message'] = $message->OwnerNameValidationMsg();
+            $return['message'] = Message::OWNER_NAME_VALIDATION_MSG;
         } elseif (Account::validationRequired($data['mobile']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->MobileNumberMsg();
+            $return['message'] = Message::MOBILE_NUMBER_MSG;
         } elseif (Account::validationRequired($data['address']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->AddressMsg();
+            $return['message'] = Message::ADDRESS_MSG;
         } else {
             $return['status'] = true;
         }
@@ -703,26 +660,25 @@ class Account extends Bank
     public function DepositValidation($data)
     {
         $return = [];
-        $message = $this->message();
         if (Account::validationRequired($data['ownerId']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->OwnerIdMsg();
+            $return['message'] = Message::OWNER_ID_MSG;
         } elseif (
             Account::validationRequired($data['transactionType']) == false
         ) {
             $return['status'] = 'false';
-            $return['message'] = $message->transactionTypeMsg();
+            $return['message'] = Message::TRANSACTION_TYPE_MSG;
         } elseif ($data['transactionType'] != 'Deposit') {
             $return['status'] = 'false';
-            $return['message'] = $message->transactionTypInvaliedMsg();
+            $return['message'] = Message::TRANSACTION_TYPE_INVALIED;
         } elseif (Account::validationRequired($data['amount']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->ammountMsg();
+            $return['message'] = Message::AMMOUNT_MSG;
         } elseif (
             Account::validationRequired($data['tarnsactionMode']) == false
         ) {
             $return['status'] = 'false';
-            $return['message'] = $message->transactionModeMsg();
+            $return['message'] = Message::TRANSACTION_MODE_MSG;
         } else {
             $return['status'] = true;
         }
@@ -733,30 +689,29 @@ class Account extends Bank
     public function UpdateAccountValidation($data)
     {
         $return = [];
-        $message = $this->message();
         if (Account::validationRequired($data['accountType']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->AccountTypeMsg();
+            $return['message'] = Message::ACCOUNT_TYPE_MSG;
         } elseif (
             Account::validationRequired($data['accountSubType']) == false
         ) {
             $return['status'] = 'false';
-            $return['message'] = $message->subAccountTypeMsg();
+            $return['message'] = Message::SUB_ACCOUNT_TYPE_MSG;
         } elseif (Account::validationRequired($data['ownerId']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->OwnerIdMsg();
+            $return['message'] = Message::OWNER_ID_MSG;
         } elseif (Account::validationRequired($data['ownerName']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->OwnerNameMSg();
+            $return['message'] = Message::OWNER_NAME_MSG;
         } elseif (!preg_match('/^([a-zA-Z ]*)$/', $data['ownerName'])) {
             $return['status'] = 'false';
-            $return['message'] = $message->OwnerNameValidationMsg();
+            $return['message'] = Message::OWNER_NAME_VALIDATION_MSG;
         } elseif (Account::validationRequired($data['mobile']) == false) {
             $return['status'] = 'false';
-            $return['message'] =  $message->MobileNumberMsg();
+            $return['message'] =  Message::MOBILE_NUMBER_MSG;
         } elseif (Account::validationRequired($data['address']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->AddressMsg();
+            $return['message'] = Message::ADDRESS_MSG;
         } else {
             $return['status'] = true;
         }
@@ -767,29 +722,28 @@ class Account extends Bank
     public function WithdrawalValidations($data)
     {
         $return = [];
-        $message = $this->message();
         if (Account::validationRequired($data['ownerId']) == false) {
             $return['status'] = false;
-            $return['message'] = $message->OwnerIdMsg();
+            $return['message'] = Message::OWNER_ID_MSG;
         } elseif (Account::validationRequired($data['account_no']) == false) {
             $return['status'] = false;
-            $return['message'] = $message->accountNumberMsg();
+            $return['message'] = Message::ACCOUNT_NUMBER_MSG;
         } elseif (
             Account::validationRequired($data['transactionType']) == false
         ) {
             $return['status'] = false;
-            $return['message'] = $message->transactionTypeMsg();
+            $return['message'] = Message::TRANSACTION_TYPE_MSG;
         } elseif ($data['transactionType'] != 'withdrawal') {
             $return['status'] = false;
-            $return['message'] = $message->transactionTypInvaliedMsg();
+            $return['message'] = Message::TRANSACTION_TYPE_INVALIED;
         } elseif (
             Account::validationRequired($data['tarnsactionMode']) == false
         ) {
             $return['status'] = false;
-            $return['message'] = $message->transactionModeMsg();
+            $return['message'] = Message::TRANSACTION_MODE_MSG;
         } elseif (Account::validationRequired($data['amount']) == false) {
             $return['status'] = false;
-            $return['message'] = $message->ammountMsg();
+            $return['message'] = Message::AMMOUNT_MSG;
         } else {
             $return['status'] = true;
         }
@@ -802,7 +756,6 @@ class Account extends Bank
     {
         $owner_id = $request['owner_id'];
         $accounts = $_SESSION['create_account'];
-        $message = $this->message();
         if (count($accounts) > 0) {
             foreach ($accounts as $key => $accountData) {
                 if ($owner_id == $accountData['id']) {
@@ -813,11 +766,11 @@ class Account extends Bank
             $data = [
                 'status' => 'success',
                 'data' => [],
-                'message' => $message->accountRemovedSuccessMsg(),
+                'message' => Message::ACCOUNT_REMOVED_SUCCESS_MSG,
             ];
             echo json_encode($data);
         } else {
-            throw new Exception($message->NoAccount());
+            throw new Exception(Message::NO_ACCOUNT_MSG);
         }
     }
 
@@ -825,32 +778,31 @@ class Account extends Bank
     public function balancetransferValidation($data)
     {
         $return = [];
-        $message = $this->message();
         if (Account::validationRequired($data['ownerId']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->OwnerIdMsg();
+            $return['message'] = Message::OWNER_ID_MSG;
         } elseif (Account::validationRequired($data['account_no']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->accountNumberMsg();
+            $return['message'] = Message::ACCOUNT_NUMBER_MSG;
         } elseif (
             Account::validationRequired($data['transactionType']) == false
         ) {
             $return['status'] = 'false';
-            $return['message'] = $message->transactionTypeMsg();
+            $return['message'] =  Message::TRANSACTION_TYPE_MSG;
         } elseif (
             Account::validationRequired($data['tarnsactionMode']) == false
         ) {
             $return['status'] = 'false';
-            $return['message'] = $message->transactionModeMsg();
+            $return['message'] = Message::TRANSACTION_MODE_MSG;
         } elseif (Account::validationRequired($data['amount']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->ammountMsg();
+            $return['message'] = Message::AMMOUNT_MSG;
         } elseif (Account::validationRequired($data['toOwnerid']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->toOwnerIdMsg();
+            $return['message'] = Message::TO_OWNER_ID_MSG;
         } elseif (Account::validationRequired($data['toaccountno']) == false) {
             $return['status'] = 'false';
-            $return['message'] = $message->toAccountNumber();
+            $return['message'] = Message::TO_ACCOUNT_NUMBER;
         } else {
             $return['status'] = true;
         }
